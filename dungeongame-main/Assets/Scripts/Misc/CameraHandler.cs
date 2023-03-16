@@ -38,6 +38,7 @@ namespace moon
             defaultPosition = cameraTransform.localPosition.z;
             Application.targetFrameRate = 60;
             ignoreLayers =  ~(1 << 8 | 1 << 9 | 1 << 10);
+            targetTransform = FindObjectOfType<PlayerManager>().transform;
         }
 
         public void FollowTarget(float delta)

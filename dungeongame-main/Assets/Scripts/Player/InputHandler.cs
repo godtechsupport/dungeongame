@@ -17,11 +17,13 @@ namespace moon
         public bool rt_Input;
         public bool rollFlag;
         public bool sprintFlag;
+        public bool comboFlag;
         public float rollInputTimer;
 
         PlayerControls inputActions;
         PlayerAttacker playerAttacker;
         PlayerInventory playerInventory;
+        PlayerManager playerManager;
 
         Vector2 movementInput;
         Vector2 cameraInput;
@@ -30,6 +32,7 @@ namespace moon
         {
             playerAttacker = GetComponent<PlayerAttacker>();
             playerInventory = GetComponent<PlayerInventory>();
+            playerManager = GetComponent<PlayerManager>();
         }
 
         public void OnEnable()
@@ -90,8 +93,19 @@ namespace moon
             inputActions.PlayerActions.RB.performed += i => rb_Input = true;
             inputActions.PlayerActions.RT.performed += i => rt_Input = true;
 
+
             if(rb_Input)
             {
+                if(playerManager.canDoCombo)
+                {
+                    comboFlag = true;
+                    playerAttacker.HandleWeaponCombo(playerInventory.rightWeapon);
+                    comboFlag = false;
+                }
+                else
+                {
+                    playerAttacker.HandleLightAttack(playerInventory.rightWeapon);
+                }
                 playerAttacker.HandleLightAttack(playerInventory.rightWeapon);
             }
             if(rt_Input)
