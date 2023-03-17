@@ -8,10 +8,12 @@ namespace moon
     {
         AnimatorHandle animatorHandler;
         InputHandler inputHandler;
+        WeaponSlotManager weaponSlotManager;
         public string lastAttack;
         private void Awake()
         {
             animatorHandler = GetComponentInChildren<AnimatorHandle>();
+            weaponSlotManager = GetComponentInChildren<WeaponSlotManager>();
             inputHandler = GetComponent<InputHandler>();
         }
         public void HandleWeaponCombo(WeaponItem weapon)
@@ -27,11 +29,13 @@ namespace moon
         }
         public void HandleLightAttack(WeaponItem weapon)
         {
+            weaponSlotManager.attackingWeapon = weapon;
             animatorHandler.PlayTargetAnimation(weapon.OH_Light_Attack_01, true);
             lastAttack = weapon.OH_Light_Attack_01;
         }
         public void HandleHeavyAttack(WeaponItem weapon)
         {
+            weaponSlotManager.attackingWeapon = weapon;
             animatorHandler.PlayTargetAnimation(weapon.OH_Heavy_Attack, true);
             lastAttack = weapon.OH_Heavy_Attack;
         }

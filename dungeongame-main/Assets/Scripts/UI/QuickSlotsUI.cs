@@ -12,7 +12,7 @@ namespace moon
 
         public void UpdateWeaponQuickSlotsUI(bool isLeft, WeaponItem weapon)
         {
-            if(isLeft = false)
+            if(isLeft == false)
             {
                 if(weapon.itemIcon != null)
                 {

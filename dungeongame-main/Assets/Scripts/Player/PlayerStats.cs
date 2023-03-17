@@ -9,14 +9,21 @@ namespace moon
         public int healthLevel = 10;
         public int maxHealth;
         public int currentHealth;
+        
+        public int staminaLevel = 10;
+        public int maxStamina;
+        public int currentStamina;
 
         public HPBar healthBar;
+        public STABar staminaBar;
 
         AnimatorHandle animatorHandler;
 
         private void Awake()
         {
             animatorHandler = GetComponentInChildren<AnimatorHandle>();
+            healthBar = FindObjectOfType<HPBar>();
+            staminaBar = FindObjectOfType<STABar>();
         }
 
         void Start()
@@ -24,6 +31,9 @@ namespace moon
             maxHealth = SetMaxHealthFromHealthLevel();
             currentHealth = maxHealth;
             healthBar.SetMaxHealth(maxHealth);
+            maxStamina = SetMaxStaminaFromStaminaLevel();
+            currentStamina = maxStamina;
+            staminaBar.SetMaxStamina(maxStamina);
         }
 
         private int SetMaxHealthFromHealthLevel()
@@ -45,6 +55,18 @@ namespace moon
                 animatorHandler.PlayTargetAnimation("Death", true);
                 //HANDLE DEATH
             }
+        }
+
+        public void TakeStaminaDamage(int damage)
+        {
+            currentStamina = currentStamina - damage;
+            staminaBar.SetCurrentStamina(currentStamina);
+        }
+
+        private int SetMaxStaminaFromStaminaLevel()
+        {
+            maxStamina = staminaLevel * 10;
+            return maxStamina;
         }
     }
 }
