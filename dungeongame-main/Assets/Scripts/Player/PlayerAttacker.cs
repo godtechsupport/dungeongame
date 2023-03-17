@@ -19,21 +19,21 @@ namespace moon
             if(inputHandler.comboFlag)
             {
                 animatorHandler.anim.SetBool("canDoCombo", false);
-                if(lastAttack == weapon.OH_Light_Attack_1)
+                if(lastAttack == weapon.OH_Light_Attack_01)
                 {
-                    animatorHandler.PlayTargetAnimation(weapon.OH_Light_Attack_1, true);
+                    animatorHandler.PlayTargetAnimation(weapon.OH_Light_Attack_02, true);
                 }
             }
         }
         public void HandleLightAttack(WeaponItem weapon)
         {
-            animatorHandler.PlayTargetAnimation(weapon.OH_Light_Attack_1, true);
-            lastAttack = weapon.OH_Light_Attack_1;
+            animatorHandler.PlayTargetAnimation(weapon.OH_Light_Attack_01, true);
+            lastAttack = weapon.OH_Light_Attack_01;
         }
         public void HandleHeavyAttack(WeaponItem weapon)
         {
-            animatorHandler.PlayTargetAnimation(weapon.OH_Heavy_Attack_1, true);
-            lastAttack = weapon.OH_Heavy_Attack_1;
+            animatorHandler.PlayTargetAnimation(weapon.OH_Heavy_Attack, true);
+            lastAttack = weapon.OH_Heavy_Attack;
         }
     }
 }
