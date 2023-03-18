@@ -17,6 +17,8 @@ namespace moon
         public int currentRightWeaponIndex = -1;
         public int currentLeftWeaponIndex = -1;
 
+        public List<WeaponItem> weaponsInventory; 
+
         private void Awake()
         {
             weaponSlotManager = GetComponentInChildren<WeaponSlotManager>();
@@ -27,7 +29,7 @@ namespace moon
             rightWeapon = unarmedWeapon;
             leftWeapon = unarmedWeapon;            
         }
-
+        
         public void ChangeRightWeapon()
         {
             if(currentRightWeaponIndex < weaponsInRightHandSlots.Length -1)
