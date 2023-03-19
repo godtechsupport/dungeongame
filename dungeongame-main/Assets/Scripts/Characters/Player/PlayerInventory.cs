@@ -27,7 +27,9 @@ namespace moon
         private void Start()
         {
             rightWeapon = unarmedWeapon;
-            leftWeapon = unarmedWeapon;            
+            leftWeapon = unarmedWeapon;
+            currentLeftWeaponIndex = -1;
+            currentRightWeaponIndex = -1;
         }
         
         public void ChangeRightWeapon()

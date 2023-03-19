@@ -17,6 +17,12 @@ namespace moon
         public bool a_Input;
         public bool rb_Input;
         public bool rt_Input;
+        public bool jump_Input;
+        public bool inventory_Input;
+        public bool lockOnInput;
+        public bool right_Stick_Right_Input;
+        public bool right_Stick_Left_Input;
+
         public bool d_Pad_Up;
         public bool d_Pad_Down;
         public bool d_Pad_Left;
@@ -25,12 +31,16 @@ namespace moon
         public bool rollFlag;
         public bool sprintFlag;
         public bool comboFlag;
+        public bool lockOnFlag;
+        public bool inventoryFlag;
         public float rollInputTimer;
 
         PlayerControls inputActions;
         PlayerAttacker playerAttacker;
         PlayerInventory playerInventory;
         PlayerManager playerManager;
+        UIManager uIManager;
+        CameraHandler cameraHandler;
 
         Vector2 movementInput;
         Vector2 cameraInput;
@@ -40,6 +50,8 @@ namespace moon
             playerAttacker = GetComponent<PlayerAttacker>();
             playerInventory = GetComponent<PlayerInventory>();
             playerManager = GetComponent<PlayerManager>();
+            uIManager = FindObjectOfType<UIManager>();
+            cameraHandler = FindObjectOfType<CameraHandler>();
         }
 
         public void OnEnable()
@@ -49,6 +61,16 @@ namespace moon
                 inputActions = new PlayerControls();
                 inputActions.PlayerMovement.Movement.performed += inputActions => movementInput = inputActions.ReadValue<Vector2>();
                 inputActions.PlayerMovement.Camera.performed += i => cameraInput = i.ReadValue<Vector2>();
+                inputActions.PlayerActions.RB.performed += i => rb_Input = true;
+                inputActions.PlayerActions.RT.performed += i => rt_Input = true;
+                inputActions.PlayerActions.Interact.performed += i => a_Input = true;
+                inputActions.PlayerActions.Inventory.performed += inputActions => inventory_Input = true;
+                inputActions.PlayerQuickSlots.DPadRight.performed += i => d_Pad_Right = true;
+                inputActions.PlayerQuickSlots.DPadLeft.performed += i => d_Pad_Left = true;
+                inputActions.PlayerActions.Jump.performed += inputActions => jump_Input = true;
+                inputActions.PlayerActions.LockOn.performed += inputActions => lockOnInput = true;
+                inputActions.PlayerMovement.LockOnRight.performed += i => right_Stick_Right_Input = true;
+                inputActions.PlayerMovement.LockOnLeft.performed += i => right_Stick_Left_Input = true;
             }
             inputActions.Enable();
         }
@@ -64,6 +86,8 @@ namespace moon
             HandleRollingInput(delta);
             HandleAttackInput(delta);
             HandleQuickSlotsInput();
+            HandleInventoryInput();
+            HandleLockOnInput();
         }
 
         private void MoveInput(float delta)
@@ -78,11 +102,10 @@ namespace moon
         private void HandleRollingInput(float delta)
         {
             b_Input = inputActions.PlayerActions.Roll.IsPressed();
-
+            sprintFlag = b_Input;
             if (b_Input)
             {
                 rollInputTimer += delta;
-                sprintFlag = true;
             }
             else
             {
@@ -98,10 +121,6 @@ namespace moon
 
         private void HandleAttackInput(float delta)
         {
-            inputActions.PlayerActions.RB.performed += i => rb_Input = true;
-            inputActions.PlayerActions.RT.performed += i => rt_Input = true;
-
-
             if(rb_Input)
             {
                 if(playerManager.canDoCombo)
@@ -128,9 +147,6 @@ namespace moon
     
         private void HandleQuickSlotsInput()
         {
-            inputActions.PlayerQuickSlots.DPadRight.performed += i => d_Pad_Right = true;
-            inputActions.PlayerQuickSlots.DPadLeft.performed += i => d_Pad_Left = true;
-
             if(d_Pad_Right)
             {
                 playerInventory.ChangeRightWeapon();
@@ -138,6 +154,66 @@ namespace moon
             else if(d_Pad_Left)
             {
                 playerInventory.ChangeLeftWeapon();
+            }
+        }
+
+        private void HandleInventoryInput()
+        {
+            if(inventory_Input)
+            {
+                inventoryFlag = !inventoryFlag;
+                if (inventoryFlag)
+                {
+                    uIManager.OpenSelectWindow();
+                    uIManager.UpdateUI();
+                    uIManager.hudWindow.SetActive(false);
+                }
+                else
+                {
+                    uIManager.CloseSelectWindow();
+                    uIManager.CloseAllInventoryWindows();
+                    uIManager.hudWindow.SetActive(true);
+                }    
+            }
+        }
+
+        private void HandleLockOnInput()
+        {
+            if (lockOnInput && !lockOnFlag)
+            {
+                lockOnInput = false;
+                lockOnFlag = true;
+                cameraHandler.HandleLockOn();
+                if (cameraHandler.nearestLockOnTarget != null)
+                {
+                    cameraHandler.currentLockOnTarget = cameraHandler.nearestLockOnTarget;
+                    lockOnFlag = true;
+                }
+            }
+            else if (lockOnInput && lockOnFlag)
+            {
+                lockOnInput = false;
+                lockOnFlag = false;
+                cameraHandler.ClearLockOnTargets();
+            }
+
+            if (lockOnFlag && right_Stick_Left_Input)
+            {
+                right_Stick_Left_Input = false;
+                cameraHandler.HandleLockOn();
+                if (cameraHandler.leftLockTarget != null)
+                {
+                    cameraHandler.currentLockOnTarget = cameraHandler.leftLockTarget;
+                }
+            }
+            if (lockOnFlag && right_Stick_Right_Input)
+            {
+                right_Stick_Right_Input = false;
+                cameraHandler.HandleLockOn();
+                if (cameraHandler.rightLockTarget != null)
+                {
+                    cameraHandler.currentLockOnTarget = cameraHandler.rightLockTarget;
+                }
             }
         }
     }

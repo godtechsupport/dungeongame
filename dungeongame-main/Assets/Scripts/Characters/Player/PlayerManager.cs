@@ -4,12 +4,15 @@ using UnityEngine;
 
 namespace moon
 {
-    public class PlayerManager : MonoBehaviour
+    public class PlayerManager : CharacterManager
     {
         InputHandler inputHandler;
         Animator anim;
         CameraHandler cameraHandler;
         PlayerLocomotion playerLocomotion;
+        InteractableUI interactableUI;
+        public GameObject interactableUIGameObject;
+        public GameObject itemInteractableGameObject;
 
         public bool isInteracting;
 
@@ -25,6 +28,7 @@ namespace moon
             anim = GetComponentInChildren<Animator>();
             playerLocomotion = GetComponent<PlayerLocomotion>();
             cameraHandler = FindObjectOfType<CameraHandler>();
+            interactableUI = FindObjectOfType<InteractableUI>();
         }
 
         void Update()
@@ -32,36 +36,36 @@ namespace moon
             float delta = Time.deltaTime;
             isInteracting = anim.GetBool("isInteracting");
             canDoCombo = anim.GetBool("canDoCombo");
-
-            
+            anim.SetBool("isInAir", isInAir);
             inputHandler.TickInput(delta);
             playerLocomotion.HandleMovement(delta);
-            playerLocomotion.HandleRollingAndSprinting(delta);
             playerLocomotion.HandleFalling(delta, playerLocomotion.moveDirection);
+            playerLocomotion.HandleRollingAndSprinting(delta);
+            playerLocomotion.HandleJumping();
+            CheckForInteractableObject();
         }
 
-        private void FixedUpdate()
-        {
-            float delta = Time.fixedDeltaTime;
-
-            if (cameraHandler != null)
-            {
-                cameraHandler.FollowTarget(delta);
-                cameraHandler.HandleCameraRotation(delta, inputHandler.mouseX, inputHandler.mouseY);
-            }
-        }
 
         private void LateUpdate()
         {
             inputHandler.rollFlag = false;
-            inputHandler.sprintFlag = false;
             inputHandler.rb_Input = false;
             inputHandler.rt_Input = false;
             inputHandler.d_Pad_Up = false;
             inputHandler.d_Pad_Down = false;
             inputHandler.d_Pad_Left = false;
             inputHandler.d_Pad_Right = false;
-            
+            inputHandler.a_Input = false;
+            inputHandler.jump_Input = false;
+            inputHandler.inventory_Input = false;
+
+            float delta = Time.deltaTime;
+
+            if (cameraHandler != null)
+            {
+                cameraHandler.FollowTarget(delta);
+                cameraHandler.HandleCameraRotation(delta, inputHandler.mouseX, inputHandler.mouseY);
+            }
 
             if (isInAir)
             {
@@ -81,15 +85,26 @@ namespace moon
 
                     if(interactableObject != null)
                     {
-                        string interactableText = interactableObject.interactableText;
-                        //SET UI TEXT TO INTERACTABLES TEXT
-                        //SET THE POP UP TRUE
+                        string interactText = interactableObject.interactableText;
+                        interactableUI.interactableText.text = interactText;
+                        interactableUIGameObject.SetActive(true);
 
-                        if(inputHandler.a_Input)
+                        if (inputHandler.a_Input)
                         {
                             hit.collider.GetComponent<Interactable>().Interact(this);
                         }
                     }
+                }
+            }
+            else
+            {
+                if (interactableUIGameObject != null)
+                {
+                    interactableUIGameObject.SetActive(false);
+                }
+                if (itemInteractableGameObject != null && inputHandler.a_Input)
+                {
+                    itemInteractableGameObject.SetActive(false);
                 }
             }
         }
