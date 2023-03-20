@@ -15,6 +15,7 @@ namespace moon
 
         public bool b_Input;
         public bool a_Input;
+        public bool y_Input;
         public bool rb_Input;
         public bool rt_Input;
         public bool jump_Input;
@@ -29,6 +30,7 @@ namespace moon
         public bool d_Pad_Right;
 
         public bool rollFlag;
+        public bool twoHandFlag;
         public bool sprintFlag;
         public bool comboFlag;
         public bool lockOnFlag;
@@ -71,6 +73,7 @@ namespace moon
                 inputActions.PlayerActions.LockOn.performed += inputActions => lockOnInput = true;
                 inputActions.PlayerMovement.LockOnRight.performed += i => right_Stick_Right_Input = true;
                 inputActions.PlayerMovement.LockOnLeft.performed += i => right_Stick_Left_Input = true;
+                inputActions.PlayerActions.Y.performed += i => y_Input = true; 
             }
             inputActions.Enable();
         }
@@ -215,6 +218,8 @@ namespace moon
                     cameraHandler.currentLockOnTarget = cameraHandler.rightLockTarget;
                 }
             }
+
+            cameraHandler.SetCameraHeight();
         }
     }
 }
