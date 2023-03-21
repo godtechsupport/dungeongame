@@ -91,20 +91,23 @@ namespace moon
             }
             else
             {
-                Vector3 dir = currentLockOnTarget.transform.position - transform.position;
-                dir.Normalize();
-                dir.y = 0;
+                if (currentLockOnTarget != null)
+                {
+                    Vector3 dir = currentLockOnTarget.transform.position - transform.position;
+                    dir.Normalize();
+                    dir.y = 0;
 
-                Quaternion targetRotation = Quaternion.LookRotation(dir);
-                transform.rotation = targetRotation;
+                    Quaternion targetRotation = Quaternion.LookRotation(dir);
+                    transform.rotation = targetRotation;
 
-                dir = currentLockOnTarget.transform.position - cameraPivotTransform.position;
-                dir.Normalize();
+                    dir = currentLockOnTarget.transform.position - cameraPivotTransform.position;
+                    dir.Normalize();
 
-                targetRotation = Quaternion.LookRotation(dir);
-                Vector3 eulerAngle = targetRotation.eulerAngles;
-                eulerAngle.y = 0;
-                cameraPivotTransform.localEulerAngles = eulerAngle;
+                    targetRotation = Quaternion.LookRotation(dir);
+                    Vector3 eulerAngle = targetRotation.eulerAngles;
+                    eulerAngle.y = 0;
+                    cameraPivotTransform.localEulerAngles = eulerAngle;
+                }
             }
         }
         
@@ -159,7 +162,7 @@ namespace moon
 
                             if (hit.transform.gameObject.layer == enviromentLayer)
                             {
-                                //CANNOT LOCK ON OBJECT COLLIDING
+                                Debug.Log("Cannot Lock!");
                             }
                             else
                             {

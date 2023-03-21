@@ -27,7 +27,6 @@ namespace moon
         float minimumDistanceNeededToBeginFall = 1f;
         [SerializeField]
         float groundDirectionRayDistance = 0.2f;
-        LayerMask ignoreForGroundCheck;
         public float inAirTimer;
 
         [Header("Movement Stats")]
@@ -57,7 +56,6 @@ namespace moon
             myTransform = transform;
             animatorHandler.Initialize();
             playerManager.isGrounded = true;
-            ignoreForGroundCheck = ~(1 << 8 | 1 << 11);
         }
 
         #region  Movement
@@ -68,7 +66,7 @@ namespace moon
         {
             if (!playerManager.isInteracting)
             {
-                if (inputHandler.lockOnFlag)
+                if (inputHandler.lockOnFlag && cameraHandler.currentLockOnTarget != null)
                 {
                     if (inputHandler.sprintFlag || inputHandler.rollFlag)
                     {
@@ -221,7 +219,7 @@ namespace moon
             targetPosition = myTransform.position;
 
             Debug.DrawRay(origin, -Vector3.up * minimumDistanceNeededToBeginFall, Color.red, 0.1f, false);
-            if (Physics.Raycast(origin, -Vector3.up, out hit, minimumDistanceNeededToBeginFall, ignoreForGroundCheck))
+            if (Physics.Raycast(origin, -Vector3.up, out hit, minimumDistanceNeededToBeginFall))
             {
                 normalVector = hit.normal;
                 Vector3 tp = hit.point;

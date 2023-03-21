@@ -40,6 +40,7 @@ namespace moon
         PlayerControls inputActions;
         PlayerAttacker playerAttacker;
         PlayerInventory playerInventory;
+        WeaponSlotManager weaponSlotManager;
         PlayerManager playerManager;
         UIManager uIManager;
         CameraHandler cameraHandler;
@@ -54,6 +55,7 @@ namespace moon
             playerManager = GetComponent<PlayerManager>();
             uIManager = FindObjectOfType<UIManager>();
             cameraHandler = FindObjectOfType<CameraHandler>();
+            weaponSlotManager = GetComponentInChildren<WeaponSlotManager>();
         }
 
         public void OnEnable()
@@ -73,7 +75,7 @@ namespace moon
                 inputActions.PlayerActions.LockOn.performed += inputActions => lockOnInput = true;
                 inputActions.PlayerMovement.LockOnRight.performed += i => right_Stick_Right_Input = true;
                 inputActions.PlayerMovement.LockOnLeft.performed += i => right_Stick_Left_Input = true;
-                inputActions.PlayerActions.Y.performed += i => y_Input = true; 
+                inputActions.PlayerActions.Y.performed += i => y_Input = true;
             }
             inputActions.Enable();
         }
@@ -91,6 +93,7 @@ namespace moon
             HandleQuickSlotsInput();
             HandleInventoryInput();
             HandleLockOnInput();
+            HandleTwoHandInput();
         }
 
         private void MoveInput(float delta)
@@ -124,9 +127,9 @@ namespace moon
 
         private void HandleAttackInput(float delta)
         {
-            if(rb_Input)
+            if (rb_Input)
             {
-                if(playerManager.canDoCombo)
+                if (playerManager.canDoCombo)
                 {
                     comboFlag = true;
                     playerAttacker.HandleWeaponCombo(playerInventory.rightWeapon);
@@ -134,7 +137,7 @@ namespace moon
                 }
                 else
                 {
-                    if(playerManager.isInteracting)
+                    if (playerManager.isInteracting)
                         return;
                     if (playerManager.canDoCombo)
                         return;
@@ -142,19 +145,19 @@ namespace moon
                 }
                 playerAttacker.HandleLightAttack(playerInventory.rightWeapon);
             }
-            if(rt_Input)
+            if (rt_Input)
             {
                 playerAttacker.HandleHeavyAttack(playerInventory.rightWeapon);
             }
         }
-    
+
         private void HandleQuickSlotsInput()
         {
-            if(d_Pad_Right)
+            if (d_Pad_Right)
             {
                 playerInventory.ChangeRightWeapon();
             }
-            else if(d_Pad_Left)
+            else if (d_Pad_Left)
             {
                 playerInventory.ChangeLeftWeapon();
             }
@@ -162,7 +165,7 @@ namespace moon
 
         private void HandleInventoryInput()
         {
-            if(inventory_Input)
+            if (inventory_Input)
             {
                 inventoryFlag = !inventoryFlag;
                 if (inventoryFlag)
@@ -176,7 +179,7 @@ namespace moon
                     uIManager.CloseSelectWindow();
                     uIManager.CloseAllInventoryWindows();
                     uIManager.hudWindow.SetActive(true);
-                }    
+                }
             }
         }
 
@@ -220,6 +223,24 @@ namespace moon
             }
 
             cameraHandler.SetCameraHeight();
+        }
+
+        private void HandleTwoHandInput()
+        {
+            if (y_Input)
+            {
+                y_Input = false;
+                twoHandFlag = !twoHandFlag;
+                if(twoHandFlag)
+                {
+                    weaponSlotManager.LoadWeaponOnSlot(playerInventory.rightWeapon, false);
+                }
+                else
+                {
+                    weaponSlotManager.LoadWeaponOnSlot(playerInventory.rightWeapon, false);
+                    weaponSlotManager.LoadWeaponOnSlot(playerInventory.leftWeapon, true);
+                }
+            }
         }
     }
 }
