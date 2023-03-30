@@ -40,6 +40,7 @@ namespace moon
         PlayerControls inputActions;
         PlayerAttacker playerAttacker;
         PlayerInventory playerInventory;
+        AnimatorHandle animatorHandle;
         WeaponSlotManager weaponSlotManager;
         PlayerManager playerManager;
         UIManager uIManager;
@@ -56,6 +57,7 @@ namespace moon
             uIManager = FindObjectOfType<UIManager>();
             cameraHandler = FindObjectOfType<CameraHandler>();
             weaponSlotManager = GetComponentInChildren<WeaponSlotManager>();
+            animatorHandle = GetComponentInChildren<AnimatorHandle>();
         }
 
         public void OnEnable()

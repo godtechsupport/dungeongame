@@ -41,6 +41,10 @@ namespace moon
         [SerializeField]
         float fallingSpeed = 45;
 
+        public CapsuleCollider characterCollider;
+        public CapsuleCollider characterCollisionBlockerCollider;
+
+
         private void Awake()
         {
             cameraHandler = FindObjectOfType<CameraHandler>();
@@ -56,6 +60,8 @@ namespace moon
             myTransform = transform;
             animatorHandler.Initialize();
             playerManager.isGrounded = true;
+
+            Physics.IgnoreCollision(characterCollider, characterCollisionBlockerCollider, true);
         }
 
         #region  Movement

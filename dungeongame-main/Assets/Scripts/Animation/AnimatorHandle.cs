@@ -4,13 +4,12 @@ using UnityEngine;
 
 namespace moon 
 {
-    public class AnimatorHandle : MonoBehaviour
+    public class AnimatorHandle : AnimatorManager
     {
         PlayerManager playerManager;
-        public Animator anim;
         private InputHandler inputHandler;
         private PlayerLocomotion playerLocomotion;
-        int vertical;
+        int vertical;  
         int horizontal;
         public bool canRotate;
 
@@ -84,14 +83,6 @@ namespace moon
             anim.SetFloat(vertical, v, 0.1f, Time.deltaTime);
             anim.SetFloat(horizontal, h, 0.1f, Time.deltaTime);
         }
-
-        public void PlayTargetAnimation(string targetAnim, bool isInteracting)
-        {
-            anim.applyRootMotion = isInteracting;
-            anim.SetBool("isInteracting", isInteracting);
-            anim.CrossFade(targetAnim, 0.2f);
-        }
-
 
         public void CanRotate()
         {

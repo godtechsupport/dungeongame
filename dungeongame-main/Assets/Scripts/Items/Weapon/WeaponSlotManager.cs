@@ -15,6 +15,7 @@ namespace moon
         
         public WeaponItem attackingWeapon;
 
+        PlayerManager playerManager;
         Animator animator;
         QuickSlotsUI quickSlotsUI;
         PlayerStats playerStats;
@@ -22,6 +23,7 @@ namespace moon
 
         private void Awake()
         {
+            playerManager = GetComponentInParent<PlayerManager>();
             animator = GetComponent<Animator>();
             quickSlotsUI = FindObjectOfType<QuickSlotsUI>();
             playerStats = GetComponentInParent<PlayerStats>();
@@ -103,20 +105,20 @@ namespace moon
             rightHandDamageCollider = rightHandSlot.currentWeaponModel.GetComponentInChildren<DamageCollider>();
         }
 
-        public void OpenRightHandDamageCollider()
+        public void OpenDamageCollider()
         {
-            rightHandDamageCollider.EnableDamageCollider();
+            if (playerManager.isUsingRightHand)
+            {
+                rightHandDamageCollider.EnableDamageCollider();
+            }
+            else if (playerManager.isUsingLeftHand)
+            {
+                leftHandDamageCollider.EnableDamageCollider();
+            }
         }
-        public void OpenLeftHandDamageCollider()
-        {
-            leftHandDamageCollider.EnableDamageCollider();
-        }
-        public void CloseRightHandDamageCollider()
+        public void CloseDamageCollider()
         {
             rightHandDamageCollider.DisableDamageCollider();
-        }
-        public void CloseLeftHandDamageCollider()
-        {
             leftHandDamageCollider.DisableDamageCollider();
         }
         #endregion
